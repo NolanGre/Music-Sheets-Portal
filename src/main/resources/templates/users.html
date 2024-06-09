@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>User Account</title>
+    <link rel="stylesheet" type="text/css" href="/styles.css">
+</head>
+<body>
+<h1>User Account</h1>
+<div>
+    <h2>User Information</h2>
+    <p th:text="${user.username}">Username</p>
+    <p th:text="${user.email}">Email</p>
+</div>
+<div>
+    <h2>Your Sheets</h2>
+    <div th:each="sheet : ${userSheets}">
+        <div class="sheet">
+            <img th:src="@{${sheet.imageUrl}}" alt="Sheet Image"/>
+            <h2 th:text="${sheet.title}">Sheet Title</h2>
+            <p th:text="${sheet.description}">Sheet Description</p>
+            <form th:action="@{'/api/v1/music-sheet/sheets/' + ${sheet.id}}" method="post">
+                <input type="hidden" name="_method" value="delete"/>
+                <button type="submit">Delete Sheet</button>
+            </form>
+        </div>
+    </div>
+</div>
+<div>
+    <h2>Your Comments</h2>
+    <div th:each="comment : ${userComments}">
+        <p th:text="${comment.content}">Comment Content</p>
+        <form th:action="@{'/api/v1/music-sheet/comments/' + ${comment.id}}" method="post">
+            <input type="hidden" name="_method" value="delete"/>
+            <button type="submit">Delete Comment</button>
+        </form>
+    </div>
+</div>
+<div>
+    <h2>Your Likes</h2>
+    <div th:each="like : ${userLikes}">
+        <p th:text="'Liked Sheet: ' + ${like.sheetTitle}">Liked Sheet Title</p>
+    </div>
+</div>
+</body>
+</html>

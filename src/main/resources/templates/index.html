@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Music Sheets Portal</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+<h1>Music Sheets Portal</h1>
+<div th:each="sheet : ${sheets}">
+    <div class="sheet">
+        <img th:src="@{${sheet.imageUrl}}" alt="Sheet Image"/>
+        <h2 th:text="${sheet.title}">Sheet Title</h2>
+        <p th:text="${sheet.description}">Sheet Description</p>
+        <div>
+            <h3>Comments</h3>
+            <div th:each="comment : ${sheet.comments}">
+                <p th:text="${comment.content}">Comment Content</p>
+            </div>
+            <form th:action="@{'/api/v1/music-sheet/comments/' + ${sheet.id}}" method="post">
+                <textarea name="content" placeholder="Add a comment"></textarea>
+                <button type="submit">Add Comment</button>
+            </form>
+        </div>
+        <div>
+            <h3>Likes</h3>
+            <p th:text="${sheet.likeCount} + ' Likes'">Number of Likes</p>
+            <form th:action="@{'/api/v1/music-sheet/likes/' + ${sheet.id}}" method="post">
+                <button type="submit">Toggle Like</button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>
