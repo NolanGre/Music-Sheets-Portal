@@ -46,11 +46,9 @@ public class Sheet {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    //@ValidEnum(enumClass = Genre.class, message = "Invalid genre. Must be one of Genre enum")
     private Genre genre;
 
     @OneToMany(mappedBy = "sheet", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    //TODO: test orphalRemobal necessary
     private List<Like> likes;
 
     @OneToMany(mappedBy = "sheet", cascade = CascadeType.REMOVE, orphanRemoval = true)

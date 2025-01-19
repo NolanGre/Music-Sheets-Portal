@@ -50,7 +50,6 @@ public class SheetController {
                 .body(sheetMapper.sheetToWholeSheetResponseDTO(sheet));
     }
 
-    //TODO change response dto?
     @PutMapping("/{sheetId}")
     public ResponseEntity<WholeSheetResponseDTO> updateWholeSheet(@PathVariable Long sheetId,
                                               @Valid @RequestBody UpdateSheetRequestDTO updateSheetRequestDTO,

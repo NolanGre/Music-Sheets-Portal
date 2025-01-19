@@ -35,7 +35,7 @@ public class Comment {
     @NotNull(message = "Author cannot be null")
     private User author;
 
-    @Column(length = 1000, nullable = false)   //TODO: front-end constrains for 1k symbols
+    @Column(length = 1000, nullable = false)
     @Size(max = 1000, message = "Comment text cannot exceed 1000 characters")
     @NotBlank(message = "Comment text cannot be blank.")
     private String text;

@@ -41,7 +41,6 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "USER_ROLE", nullable = false)
-    //@ValidEnum(enumClass = UserRole.class, message = "Invalid role. Must be one of UserRole enum")
     private UserRole role;
 
     @CreationTimestamp
