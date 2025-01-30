@@ -42,6 +42,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/sheets/*").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/**").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/api/v1/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/**").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/**").authenticated()
                         .anyRequest().denyAll())
                 .exceptionHandling(exception -> exception

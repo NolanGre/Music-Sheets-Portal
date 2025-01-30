@@ -1,5 +1,6 @@
 package org.example.musicsheets.services;
 
+import jakarta.transaction.Transactional;
 import org.example.musicsheets.models.Like;
 import org.example.musicsheets.models.Sheet;
 import org.example.musicsheets.models.User;
@@ -25,14 +26,17 @@ public class LikeService {
         return likeRepository.existsBySheetIdAndUserId(sheetId, userId);
     }
 
-    public void toggleLike(Long sheetId, Long userId) {
+    @Transactional
+    public boolean toggleLike(Long sheetId, Long userId) {
         Sheet sheet = sheetService.getSheetById(sheetId);
         User user = userService.getUserById(userId);
 
         if (doesLikeExist(sheetId, userId)) {
             likeRepository.deleteBySheetIdAndUserId(sheetId, userId);
+            return false;
         } else {
             likeRepository.save(new Like(sheet, user));
+            return true;
         }
     }
 

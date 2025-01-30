@@ -34,6 +34,7 @@ public class Like {
 
     @Getter
     @AllArgsConstructor
+    @NoArgsConstructor
     public static class LikeId implements Serializable {
         private Sheet sheet;
         private User user;
