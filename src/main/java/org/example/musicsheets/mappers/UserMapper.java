@@ -7,8 +7,9 @@ import org.example.musicsheets.dto.users.GetOneUserResponseDTO;
 import org.example.musicsheets.dto.users.UpdateWholeUserRequestDTO;
 import org.example.musicsheets.models.User;
 import org.mapstruct.Mapper;
+import org.mapstruct.MappingConstants;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface UserMapper {
 
     User registerRequestDTOtoUser(RegisterRequestDTO registerRequestDTO);

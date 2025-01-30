@@ -1,6 +1,5 @@
 package org.example.musicsheets.mappers;
 
-import jakarta.validation.Valid;
 import org.example.musicsheets.dto.sheets.CreateSheetRequestDTO;
 import org.example.musicsheets.dto.sheets.UpdateSheetRequestDTO;
 import org.example.musicsheets.dto.sheets.WholeSheetResponseDTO;
@@ -10,11 +9,12 @@ import org.example.musicsheets.models.Like;
 import org.example.musicsheets.models.Sheet;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
 import org.mapstruct.Named;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface SheetMapper {
 
     @Mapping(source = "genre", target = "genre", qualifiedByName = "stringToGenre")
