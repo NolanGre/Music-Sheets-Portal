@@ -4,14 +4,14 @@ MusicSheets - это веб-приложение для хранения и об
 
 ## Технологии
 
-- Java 17
-- Spring Boot 3.x
+- Java 21
+- Spring Boot
 - Spring Security с JWT аутентификацией
 - Spring Data JPA
 - PostgreSQL
 - Maven
 
-## Функциональность
+## Функционал
 
 - Регистрация и аутентификация пользователей
 - Управление нотными записями (создание, редактирование, удаление)
@@ -30,18 +30,18 @@ POST /api/v1/register
 **Request Body:**
 ```json
 {
-    "login": "string",
-    "password": "string",
-    "email": "string"
+   "login": "string",
+   "password": "string",
+   "username": "string",
+   "avatarUrl": "string"
 }
 ```
 **Response:** 201 Created
 ```json
 {
-    "id": "number",
-    "login": "string",
-    "email": "string",
-    "token": "string"
+   "username": "string",
+   "avatarUrl": "string",
+   "token": "string"
 }
 ```
 
@@ -59,64 +59,141 @@ POST /api/v1/login
 **Response:** 200 OK
 ```json
 {
-    "id": "number",
-    "login": "string",
-    "token": "string"
+   "username": "string",
+   "avatarUrl": "string",
+   "token": "string"
 }
 ```
 
 ### Нотные записи
 
-#### Получение ноты
+#### Получение нот
 ```http
 GET /api/v1/sheets/{sheetId}
 ```
 **Response:** 200 OK
 ```json
 {
-    "id": "number",
-    "title": "string",
-    "content": "string",
-    "genre": "string",
-    "publisher": {
-        "id": "number",
-        "login": "string"
-    },
-    "comments": [
-        {
-            "id": "number",
-            "content": "string",
-            "author": {
-                "id": "number",
-                "login": "string"
-            }
-        }
-    ],
-    "likes": [
-        {
-            "id": "number",
-            "user": {
-                "id": "number",
-                "login": "string"
-            }
-        }
-    ]
+   "id": "number",
+   "title": "string",
+   "author": "string",
+   "description": "string",
+   "genre": "string",
+   "fileUrl": "string",
+   "likesCount": "number",
+   "commentsCount": "number",
+   "publisher": {
+      "id": "number",
+      "username": "string",
+      "avatarUrl": "string"
+   },
+   "creatingDate": "string (ISO 8601)",
+   "modifyingDate": "string (ISO 8601)"
 }
 ```
 
-#### Создание ноты
+#### Создание нот
 ```http
 POST /api/v1/sheets
 ```
 **Request Body:**
 ```json
 {
-    "title": "string",
-    "content": "string",
-    "genre": "string"
+  "title": "string",
+  "author": "string",
+  "description": "string",
+  "genre": "string (one of enum)",
+  "fileUrl": "string"
 }
 ```
 **Response:** 201 Created
+```json
+{
+   "id": "number",
+   "title": "string",
+   "author": "string",
+   "description": "string",
+   "genre": "string",
+   "fileUrl": "string",
+   "likesCount": "number",
+   "commentsCount": "number",
+   "publisher": {
+      "id": "number",
+      "username": "string",
+      "avatarUrl": "string"
+   },
+   "creatingDate": "string (ISO 8601)",
+   "modifyingDate": "string (ISO 8601)"
+}
+```
+
+#### Изменение нот
+```http
+PUT /api/v1/sheets/{sheetId}
+```
+**Request Body:**
+```json
+{
+  "title": "string",
+  "author": "string",
+  "description": "string",
+  "genre": "string (one of enum)",
+  "fileUrl": "string"
+}
+```
+**Response:** 200 OK
+```json
+{
+   "id": "number",
+   "title": "string",
+   "author": "string",
+   "description": "string",
+   "genre": "string",
+   "fileUrl": "string",
+   "likesCount": "number",
+   "commentsCount": "number",
+   "publisher": {
+      "id": "number",
+      "username": "string",
+      "avatarUrl": "string"
+   },
+   "creatingDate": "string (ISO 8601)",
+   "modifyingDate": "string (ISO 8601)"
+}
+```
+#### Удаление нот
+
+```http
+DELETE /api/v1/sheets/{sheetId}
+```
+**Response:** 204 No Content
+
+### Лайки
+
+#### Проверка лайка
+
+```http
+GET /api/v1/sheets/{sheetId}/like
+```
+**Response:** 200 OK
+```json
+{
+   "isLikeExist": "boolean"
+}
+```
+#### Переключение лайка
+
+```http
+POST /api/v1/sheets/{sheetId}/like
+```
+**Response:** 200 OK
+```json
+{
+   "isLikeExist": "boolean"
+}
+```
+
+### Комментарии
 
 ### Пользователи
 
@@ -127,10 +204,10 @@ GET /api/v1/users/{userId}
 **Response:** 200 OK
 ```json
 {
-    "id": "number",
-    "login": "string",
-    "email": "string",
-    "role": "string"
+   "login": "string",
+   "username": "string",
+   "avatarUrl": "string",
+   "creationDate": "string (ISO 8601)"
 }
 ```
 
@@ -142,15 +219,31 @@ PUT /api/v1/users/{userId}
 ```json
 {
     "login": "string",
-    "email": "string",
-    "password": "string"
+    "password": "string",
+    "username": "string",
+    "avatarUrl": "string"
 }
 ```
 **Response:** 200 OK
+```json
+{
+    "login": "string",
+    "username": "string",
+    "avatarUrl": "string",
+    "creationDate": "string (ISO 8601)"
+}
+```
+
+#### Удаление пользователея
+```http
+DELETE /api/v1/users/{userId}
+```
+
+**Response:** 204 No Content
 
 ### Безопасность
 
-Все endpoints, кроме `/api/v1/login` и `/api/v1/register`, требуют JWT токен в заголовке:
+Все endpoints, кроме `/api/v1/login`, `/api/v1/register` и `/api/v1/sheets` , требуют JWT токен в заголовке:
 ```http
 Authorization: Bearer <token>
 ```
@@ -158,7 +251,7 @@ Authorization: Bearer <token>
 ## Запуск проекта
 
 1. Убедитесь, что у вас установлены:
-   - Java 17 или выше
+   - Java 21 или выше
    - Maven
    - PostgreSQL
 
