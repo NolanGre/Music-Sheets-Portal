@@ -1,6 +1,6 @@
 package org.example.musicsheets.security;
 
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.example.musicsheets.models.User;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class AuthenticationService {
 
     private final CustomUserDetailsService customUserDetailsService;

@@ -13,9 +13,13 @@ import org.mapstruct.MappingConstants;
 public interface UserMapper {
 
     User registerRequestDTOtoUser(RegisterRequestDTO registerRequestDTO);
+
     User updatedUserDTOtoUser(UpdateWholeUserRequestDTO updatedUserDto);
+
     LoginResponseDTO userAndTokenToLoginResponse(User user, String token);
+
     RegisterResponseDTO userAndTokenToRegisterResponse(User user, String token);
+
     GetOneUserResponseDTO userToGetOneUserResponseDTO(User user);
 
 }

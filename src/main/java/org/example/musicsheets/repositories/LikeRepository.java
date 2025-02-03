@@ -8,6 +8,8 @@ import org.springframework.stereotype.Repository;
 public interface LikeRepository extends JpaRepository<Like, Like.LikeId> {
 
     boolean existsBySheetIdAndUserId(Long sheetId, Long userId);
+
     int countBySheetId(Long sheetId);
+
     void deleteBySheetIdAndUserId(Long sheetId, Long userId);
 }

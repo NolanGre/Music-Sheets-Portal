@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 
 @RestController
-@RequestMapping("/api/v1/sheets")
+@RequestMapping("/api/v1")
 @AllArgsConstructor
 public class SheetController {
 
@@ -26,15 +26,14 @@ public class SheetController {
     private final AuthorizationService authorizationService;
     private final SheetMapper sheetMapper;
 
-    @GetMapping("/{sheetId}")
+    @GetMapping("/sheets/{sheetId}")
     public ResponseEntity<WholeSheetResponseDTO> getWholeSheet(@PathVariable Long sheetId) {
-
         Sheet sheet = sheetService.getSheetById(sheetId);
 
         return ResponseEntity.ok(sheetMapper.sheetToWholeSheetResponseDTO(sheet));
     }
 
-    @PostMapping("")
+    @PostMapping("/sheets")
     public ResponseEntity<WholeSheetResponseDTO> createSheet(@Valid @RequestBody CreateSheetRequestDTO createSheetRequestDTO,
                                                              @AuthenticationPrincipal CustomUserDetails userDetails) {
         User authenticatedUser = userDetails.getUser();
@@ -47,7 +46,7 @@ public class SheetController {
         return ResponseEntity.created(location).body(sheetMapper.sheetToWholeSheetResponseDTO(sheet));
     }
 
-    @PutMapping("/{sheetId}")
+    @PutMapping("/sheets/{sheetId}")
     public ResponseEntity<WholeSheetResponseDTO> updateWholeSheet(@PathVariable Long sheetId,
                                                                   @Valid @RequestBody UpdateSheetRequestDTO updateSheetRequestDTO,
                                                                   @AuthenticationPrincipal CustomUserDetails userDetails) {
@@ -56,14 +55,13 @@ public class SheetController {
         authorizationService.checkAdminOrOwner(authenticatedUser.getId(),
                 sheetService.getPublisherId(sheetId), authenticatedUser.getRole());
 
-        Sheet sheet = sheetService.updateSheet(
-                sheetMapper.updateSheetRequestDTOtoSheet(updateSheetRequestDTO),
+        Sheet sheet = sheetService.updateSheet(sheetMapper.updateSheetRequestDTOtoSheet(updateSheetRequestDTO),
                 sheetId);
 
         return ResponseEntity.ok(sheetMapper.sheetToWholeSheetResponseDTO(sheet));
     }
 
-    @DeleteMapping("/{sheetId}")
+    @DeleteMapping("sheets/{sheetId}")
     public ResponseEntity<?> deleteSheet(@PathVariable Long sheetId, @AuthenticationPrincipal CustomUserDetails userDetails) {
         User authenticatedUser = userDetails.getUser();
 

@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import org.example.musicsheets.exceptions.SheetNotFoundException;
 import org.example.musicsheets.models.Sheet;
 import org.example.musicsheets.repositories.SheetRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -27,7 +26,7 @@ public class SheetService {
 
     public Sheet getSheetById(Long id) {
         return sheetRepository.findById(id)
-                .orElseThrow(() -> new SheetNotFoundException("Sheet with ID: " + id + "not found "));
+                .orElseThrow(() -> new SheetNotFoundException("Sheet with ID: " + id + " not found "));
     }
 
     public List<Sheet> getAllSheets() {

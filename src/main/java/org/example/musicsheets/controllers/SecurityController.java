@@ -1,6 +1,7 @@
 package org.example.musicsheets.controllers;
 
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.example.musicsheets.dto.authentication.LoginRequestDTO;
 import org.example.musicsheets.dto.authentication.LoginResponseDTO;
 import org.example.musicsheets.dto.authentication.RegisterRequestDTO;
@@ -9,7 +10,6 @@ import org.example.musicsheets.mappers.UserMapper;
 import org.example.musicsheets.models.User;
 import org.example.musicsheets.security.AuthenticationService;
 import org.example.musicsheets.services.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,18 +20,12 @@ import java.net.URI;
 
 @RestController
 @RequestMapping("/api/v1")
+@AllArgsConstructor
 public class SecurityController {
 
     private final UserService userService;
     private final AuthenticationService authenticationService;
     private final UserMapper userMapper;
-
-    @Autowired
-    public SecurityController(UserService userService, AuthenticationService authenticationService, UserMapper userMapper) {
-        this.userService = userService;
-        this.authenticationService = authenticationService;
-        this.userMapper = userMapper;
-    }
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO) {
@@ -48,8 +42,6 @@ public class SecurityController {
         String jwt = authenticationService.register(user);
         URI location = URI.create("/api/v1/users/" + user.getId());
 
-        return ResponseEntity
-                .created(location)
-                .body(userMapper.userAndTokenToRegisterResponse(user, jwt));
+        return ResponseEntity.created(location).body(userMapper.userAndTokenToRegisterResponse(user, jwt));
     }
 }
