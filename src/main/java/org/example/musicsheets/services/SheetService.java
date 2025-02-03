@@ -58,9 +58,13 @@ public class SheetService {
     @Transactional
     public void deleteSheet(Long id) {
         if (!sheetRepository.existsById(id)) {
-            throw new SheetNotFoundException("Sheet with ID: " + id + "not found ");
+            throw new SheetNotFoundException("Sheet with ID: " + id + " not found ");
         }
 
         sheetRepository.deleteById(id);
+    }
+
+    public Long getPublisherId(Long sheetId) {
+        return getSheetById(sheetId).getPublisher().getId();
     }
 }

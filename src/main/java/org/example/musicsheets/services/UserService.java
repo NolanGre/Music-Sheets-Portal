@@ -68,7 +68,7 @@ public class UserService {
         existingUser.setAvatarUrl(updatedUser.getAvatarUrl());
     }
 
-    public void deleteUser(Long userId) {
+    public void deleteUser(Long userId) throws UserNotFoundException {
         if (!userRepository.existsById(userId)) {
             throw new UserNotFoundException("User with ID: " + userId + " not found");
         }
