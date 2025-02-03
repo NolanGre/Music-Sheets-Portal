@@ -16,7 +16,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.nio.file.AccessDeniedException;
 
 @RestController
 @RequestMapping("/api/v1/sheets")
@@ -45,20 +44,17 @@ public class SheetController {
                 authenticatedUser.getId());
         URI location = URI.create("/api/v1/sheets/" + sheet.getId());
 
-        return ResponseEntity
-                .created(location)
-                .body(sheetMapper.sheetToWholeSheetResponseDTO(sheet));
+        return ResponseEntity.created(location).body(sheetMapper.sheetToWholeSheetResponseDTO(sheet));
     }
 
     @PutMapping("/{sheetId}")
     public ResponseEntity<WholeSheetResponseDTO> updateWholeSheet(@PathVariable Long sheetId,
-                                              @Valid @RequestBody UpdateSheetRequestDTO updateSheetRequestDTO,
-                                              @AuthenticationPrincipal CustomUserDetails userDetails) throws AccessDeniedException {
+                                                                  @Valid @RequestBody UpdateSheetRequestDTO updateSheetRequestDTO,
+                                                                  @AuthenticationPrincipal CustomUserDetails userDetails) {
         User authenticatedUser = userDetails.getUser();
 
-        if (!authorizationService.isAdminOrOwner(authenticatedUser.getId(), sheetId, authenticatedUser.getRole())) {
-            throw new AccessDeniedException("You do not have permission to update this sheet");
-        }
+        authorizationService.checkAdminOrOwner(authenticatedUser.getId(),
+                sheetService.getPublisherId(sheetId), authenticatedUser.getRole());
 
         Sheet sheet = sheetService.updateSheet(
                 sheetMapper.updateSheetRequestDTOtoSheet(updateSheetRequestDTO),
@@ -68,12 +64,11 @@ public class SheetController {
     }
 
     @DeleteMapping("/{sheetId}")
-    public ResponseEntity<?> deleteSheet(@PathVariable Long sheetId, @AuthenticationPrincipal CustomUserDetails userDetails) throws AccessDeniedException {
+    public ResponseEntity<?> deleteSheet(@PathVariable Long sheetId, @AuthenticationPrincipal CustomUserDetails userDetails) {
         User authenticatedUser = userDetails.getUser();
 
-        if (!authorizationService.isAdminOrOwner(authenticatedUser.getId(), sheetId, authenticatedUser.getRole())) {
-            throw new AccessDeniedException("You do not have permission to update this sheet");
-        }
+        authorizationService.checkAdminOrOwner(authenticatedUser.getId(),
+                sheetService.getPublisherId(sheetId), authenticatedUser.getRole());
 
         sheetService.deleteSheet(sheetId);
 
