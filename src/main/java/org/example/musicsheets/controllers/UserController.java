@@ -4,11 +4,8 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.example.musicsheets.dto.users.GetOneUserResponseDTO;
 import org.example.musicsheets.dto.users.UpdateWholeUserRequestDTO;
-import org.example.musicsheets.mappers.UserMapper;
-import org.example.musicsheets.models.User;
+import org.example.musicsheets.facades.UserFacade;
 import org.example.musicsheets.security.CustomUserDetails;
-import org.example.musicsheets.services.AuthorizationService;
-import org.example.musicsheets.services.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -19,42 +16,25 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 public class UserController {
 
-    private final UserService userService;
-    private final AuthorizationService authorizationService;
-    private final UserMapper userMapper;
+    private final UserFacade userFacade;
 
     @GetMapping("/users/{userId}")
     public ResponseEntity<GetOneUserResponseDTO> getUserById(@PathVariable Long userId,
                                                              @AuthenticationPrincipal CustomUserDetails userDetails) {
-        User authenticatedUser = userDetails.getUser();
-
-        authorizationService.checkAdminOrOwner(authenticatedUser.getId(), userId, authenticatedUser.getRole());
-
-        return ResponseEntity.ok(userMapper.userToGetOneUserResponseDTO(userService.getUserById(userId)));
+        return ResponseEntity.ok(userFacade.getUserById(userId, userDetails));
     }
 
     @PutMapping("/users/{userId}")
     public ResponseEntity<GetOneUserResponseDTO> updateWholeUser(@PathVariable Long userId,
                                                                  @Valid @RequestBody UpdateWholeUserRequestDTO updatedUserDto,
                                                                  @AuthenticationPrincipal CustomUserDetails userDetails) {
-        User authenticatedUser = userDetails.getUser();
-
-        authorizationService.checkAdminOrOwner(authenticatedUser.getId(), userId, authenticatedUser.getRole());
-
-        User updatedUser = userService.updateWholeUser(userId, userMapper.updatedUserDTOtoUser(updatedUserDto));
-
-        return ResponseEntity.ok(userMapper.userToGetOneUserResponseDTO(updatedUser));
+        return ResponseEntity.ok(userFacade.updateWholeUser(userId, updatedUserDto, userDetails));
     }
 
     @DeleteMapping("/users/{userId}")
     public ResponseEntity<Void> deleteUserById(@PathVariable Long userId,
                                                @AuthenticationPrincipal CustomUserDetails userDetails) {
-        User authenticatedUser = userDetails.getUser();
-
-        authorizationService.checkAdminOrOwner(authenticatedUser.getId(), userId, authenticatedUser.getRole());
-
-        userService.deleteUser(userId);
-
+        userFacade.deleteWholeUser(userId, userDetails);
         return ResponseEntity.noContent().build();
     }
 }

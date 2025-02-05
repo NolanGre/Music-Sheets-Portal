@@ -6,10 +6,7 @@ import org.example.musicsheets.dto.authentication.LoginRequestDTO;
 import org.example.musicsheets.dto.authentication.LoginResponseDTO;
 import org.example.musicsheets.dto.authentication.RegisterRequestDTO;
 import org.example.musicsheets.dto.authentication.RegisterResponseDTO;
-import org.example.musicsheets.mappers.UserMapper;
-import org.example.musicsheets.models.User;
-import org.example.musicsheets.security.AuthenticationService;
-import org.example.musicsheets.services.UserService;
+import org.example.musicsheets.facades.SecurityFacade;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,25 +20,18 @@ import java.net.URI;
 @AllArgsConstructor
 public class SecurityController {
 
-    private final UserService userService;
-    private final AuthenticationService authenticationService;
-    private final UserMapper userMapper;
+    private final SecurityFacade securityFacade;
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO) {
-        String jwt = authenticationService.login(loginRequestDTO.login(), loginRequestDTO.password());
-        User user = userService.getUserByLogin(loginRequestDTO.login());
-
-        return ResponseEntity.ok(userMapper.userAndTokenToLoginResponse(user, jwt));
+        return ResponseEntity.ok(securityFacade.login(loginRequestDTO));
     }
 
     @PostMapping("/register")
     public ResponseEntity<RegisterResponseDTO> register(@Valid @RequestBody RegisterRequestDTO registerRequestDTO) {
-        User user = userService.createUser(userMapper.registerRequestDTOtoUser(registerRequestDTO));
+        RegisterResponseDTO responseDTO = securityFacade.register(registerRequestDTO);
+        URI location = URI.create("/api/v1/users/" + responseDTO.id());
 
-        String jwt = authenticationService.register(user);
-        URI location = URI.create("/api/v1/users/" + user.getId());
-
-        return ResponseEntity.created(location).body(userMapper.userAndTokenToRegisterResponse(user, jwt));
+        return ResponseEntity.created(location).body(responseDTO);
     }
 }

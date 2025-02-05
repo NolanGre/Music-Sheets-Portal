@@ -7,6 +7,7 @@ import org.example.musicsheets.dto.users.GetOneUserResponseDTO;
 import org.example.musicsheets.dto.users.UpdateWholeUserRequestDTO;
 import org.example.musicsheets.models.User;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
@@ -18,6 +19,7 @@ public interface UserMapper {
 
     LoginResponseDTO userAndTokenToLoginResponse(User user, String token);
 
+    @Mapping(source = "user.id", target = "id")
     RegisterResponseDTO userAndTokenToRegisterResponse(User user, String token);
 
     GetOneUserResponseDTO userToGetOneUserResponseDTO(User user);
