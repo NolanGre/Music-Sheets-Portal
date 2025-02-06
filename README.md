@@ -10,6 +10,7 @@ MusicSheets - это веб-приложение для хранения и об
 - Spring Security с JWT аутентификацией
 - Spring Data JPA
 - PostgreSQL
+- Redis
 - Maven
 
 ## Функционал
@@ -410,10 +411,11 @@ Authorization: Bearer <token>
     - Java 21 или выше
     - Maven
     - PostgreSQL
+    - Redis
 
-2. Создайте базу данных PostgreSQL
+2. Создайте базы данных PostgreSQL и Redis 
 
-3. Настройте подключение к базе данных в `application.yaml`
+3. Настройте подключение к базам данных в `application.yaml`
 
 4. Запустите приложение:
 

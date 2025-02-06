@@ -13,7 +13,7 @@ public record UpdateSheetRequestDTO (
         String title,
 
         @NotBlank(message = "Author cannot be blank")
-        @Size(max = 50, message = "Author cannot exceed ")
+        @Size(max = 50, message = "Author cannot exceed 50 characters")
         String author,
 
         @Size(message = "Description text cannot exceed 1000 characters", max = 1000)

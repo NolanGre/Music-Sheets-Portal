@@ -10,16 +10,22 @@ import org.example.musicsheets.models.User;
 import org.example.musicsheets.security.CustomUserDetails;
 import org.example.musicsheets.services.AuthorizationService;
 import org.example.musicsheets.services.SheetService;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
+@CacheConfig(cacheNames = "sheets")
 public class SheetFacade {
 
     private final SheetService sheetService;
     private final AuthorizationService authorizationService;
     private final SheetMapper sheetMapper;
 
+    @Cacheable(key = "#sheetId")
     public WholeSheetResponseDTO getWholeSheet(Long sheetId) {
         return sheetMapper.sheetToWholeSheetResponseDTO(sheetService.getSheetById(sheetId));
     }
@@ -34,6 +40,7 @@ public class SheetFacade {
         return sheetMapper.sheetToWholeSheetResponseDTO(sheet);
     }
 
+    @CachePut(key = "#sheetId")
     public WholeSheetResponseDTO updateWholeSheet(Long sheetId, UpdateSheetRequestDTO updateSheetRequestDTO, CustomUserDetails userDetails) {
         User authenticatedUser = userDetails.getUser();
 
@@ -46,6 +53,7 @@ public class SheetFacade {
         return sheetMapper.sheetToWholeSheetResponseDTO(sheet);
     }
 
+    @CacheEvict(key = "#sheetId")
     public void deleteSheet(Long sheetId, CustomUserDetails userDetails) {
         User authenticatedUser = userDetails.getUser();
 
