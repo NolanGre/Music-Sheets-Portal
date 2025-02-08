@@ -1,9 +1,11 @@
 package org.example.musicsheets.security;
 
 import lombok.AllArgsConstructor;
+import org.example.musicsheets.exceptions.UserNotFoundException;
 import org.example.musicsheets.models.User;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +18,11 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     public String login(String login, String password) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(login, password));
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(login, password));
+        } catch (AuthenticationException e) {
+            throw new UserNotFoundException("User with login: " + login + " not found");
+        }
 
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(login);
 

@@ -15,6 +15,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @AllArgsConstructor
@@ -30,24 +31,26 @@ public class SheetFacade {
         return sheetMapper.sheetToWholeSheetResponseDTO(sheetService.getSheetById(sheetId));
     }
 
-    public WholeSheetResponseDTO createSheet(CreateSheetRequestDTO createSheetRequestDTO, CustomUserDetails userDetails) {
+    public WholeSheetResponseDTO createSheetWithFile(CreateSheetRequestDTO data, MultipartFile file, CustomUserDetails userDetails) {
         User authenticatedUser = userDetails.getUser();
 
-        Sheet sheet = sheetService.createSheet(
-                sheetMapper.createSheetRequestDTOtoSheet(createSheetRequestDTO),
+        Sheet sheet = sheetService.createSheetWithFile(
+                sheetMapper.createSheetRequestDTOtoSheet(data),
+                file,
                 authenticatedUser.getId());
 
         return sheetMapper.sheetToWholeSheetResponseDTO(sheet);
     }
 
     @CachePut(key = "#sheetId")
-    public WholeSheetResponseDTO updateWholeSheet(Long sheetId, UpdateSheetRequestDTO updateSheetRequestDTO, CustomUserDetails userDetails) {
+    public WholeSheetResponseDTO updateWholeSheet(Long sheetId, UpdateSheetRequestDTO data, MultipartFile file, CustomUserDetails userDetails) {
         User authenticatedUser = userDetails.getUser();
 
         authorizationService.checkAdminOrOwner(authenticatedUser.getId(),
                 sheetService.getPublisherId(sheetId), authenticatedUser.getRole());
 
-        Sheet sheet = sheetService.updateSheet(sheetMapper.updateSheetRequestDTOtoSheet(updateSheetRequestDTO),
+        Sheet sheet = sheetService.updateSheet(sheetMapper.updateSheetRequestDTOtoSheet(data),
+                file,
                 sheetId);
 
         return sheetMapper.sheetToWholeSheetResponseDTO(sheet);

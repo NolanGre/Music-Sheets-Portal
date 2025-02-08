@@ -2,13 +2,11 @@ package org.example.musicsheets.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.example.musicsheets.validation.ValidEnum;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.proxy.HibernateProxy;
@@ -66,9 +64,8 @@ public class Sheet {
     @PastOrPresent(message = "Modification date can be only past or present")
     private Date modifyingDate;
 
-    @Column(name = "FILE_URL", nullable = false)
-    @NotNull(message = "File cannot be missing")
-    private String fileUrl;  //TODO: make file services
+    @Column(name = "FILE_URL")
+    private String fileUrl;
 
     public Sheet(String title, String author, User publisher, String description, Genre genre, List<Like> likes, List<Comment> comments, String fileUrl) {
         this.title = title;

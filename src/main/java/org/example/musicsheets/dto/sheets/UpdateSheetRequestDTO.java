@@ -1,12 +1,11 @@
 package org.example.musicsheets.dto.sheets;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.example.musicsheets.models.Genre;
 import org.example.musicsheets.validation.ValidEnum;
 
-public record UpdateSheetRequestDTO (
+public record UpdateSheetRequestDTO(
 
         @NotBlank(message = "Title cannot be blank")
         @Size(max = 50, message = "Title cannot exceed ")
@@ -20,9 +19,6 @@ public record UpdateSheetRequestDTO (
         String description,
 
         @ValidEnum(enumClass = Genre.class, message = "Invalid genre. Must be one of Genre enum")
-        String genre,
-
-        @NotNull(message = "File cannot be missing")
-        String fileUrl
-)
-{}
+        String genre
+) {
+}
