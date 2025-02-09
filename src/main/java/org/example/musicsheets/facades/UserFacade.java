@@ -13,6 +13,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @AllArgsConstructor
@@ -33,12 +34,15 @@ public class UserFacade {
     }
 
     @CachePut(key = "#userId")
-    public GetOneUserResponseDTO updateWholeUser(Long userId, UpdateWholeUserRequestDTO updatedUserDto, CustomUserDetails userDetails) {
+    public GetOneUserResponseDTO updateWholeUser(Long userId,
+                                                 UpdateWholeUserRequestDTO data,
+                                                 MultipartFile file,
+                                                 CustomUserDetails userDetails) {
         User authenticatedUser = userDetails.getUser();
 
         authorizationService.checkAdminOrOwner(authenticatedUser.getId(), userId, authenticatedUser.getRole());
 
-        User updatedUser = userService.updateWholeUser(userId, userMapper.updatedUserDTOtoUser(updatedUserDto));
+        User updatedUser = userService.updateWholeUser(userId, userMapper.updatedUserDTOtoUser(data), file);
 
         return userMapper.userToGetOneUserResponseDTO(updatedUser);
     }

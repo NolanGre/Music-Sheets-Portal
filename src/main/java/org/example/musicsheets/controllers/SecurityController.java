@@ -7,11 +7,10 @@ import org.example.musicsheets.dto.authentication.LoginResponseDTO;
 import org.example.musicsheets.dto.authentication.RegisterRequestDTO;
 import org.example.musicsheets.dto.authentication.RegisterResponseDTO;
 import org.example.musicsheets.facades.SecurityFacade;
+import org.example.musicsheets.validation.ValidFile;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URI;
 
@@ -28,8 +27,9 @@ public class SecurityController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<RegisterResponseDTO> register(@Valid @RequestBody RegisterRequestDTO registerRequestDTO) {
-        RegisterResponseDTO responseDTO = securityFacade.register(registerRequestDTO);
+    public ResponseEntity<RegisterResponseDTO> register(@Valid @RequestPart("data") RegisterRequestDTO data,
+                                                        @Valid @ValidFile @RequestPart("file") MultipartFile file) {
+        RegisterResponseDTO responseDTO = securityFacade.register(data, file);
         URI location = URI.create("/api/v1/users/" + responseDTO.id());
 
         return ResponseEntity.created(location).body(responseDTO);

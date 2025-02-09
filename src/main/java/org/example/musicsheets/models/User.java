@@ -37,7 +37,7 @@ public class User {
     private String username;
 
     @Column(name = "AVATAR_URL")
-    private String avatarUrl;   // TODO: make image.  client can pass null.
+    private String avatarUrl;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "USER_ROLE", nullable = false)

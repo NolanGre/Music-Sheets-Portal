@@ -10,6 +10,7 @@ import org.example.musicsheets.models.User;
 import org.example.musicsheets.security.AuthenticationService;
 import org.example.musicsheets.services.UserService;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URI;
 
@@ -28,11 +29,10 @@ public class SecurityFacade {
         return userMapper.userAndTokenToLoginResponse(user, jwt);
     }
 
-    public RegisterResponseDTO register(RegisterRequestDTO registerRequestDTO) {
-        User user = userService.createUser(userMapper.registerRequestDTOtoUser(registerRequestDTO));
+    public RegisterResponseDTO register(RegisterRequestDTO data, MultipartFile file) {
+        User user = userService.createUser(userMapper.registerRequestDTOtoUser(data), file);
 
         String jwt = authenticationService.register(user);
-        URI location = URI.create("/api/v1/users/" + user.getId());
 
         return userMapper.userAndTokenToRegisterResponse(user, jwt);
     }

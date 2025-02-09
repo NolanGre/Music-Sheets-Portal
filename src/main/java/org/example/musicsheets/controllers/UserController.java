@@ -6,9 +6,11 @@ import org.example.musicsheets.dto.users.GetOneUserResponseDTO;
 import org.example.musicsheets.dto.users.UpdateWholeUserRequestDTO;
 import org.example.musicsheets.facades.UserFacade;
 import org.example.musicsheets.security.CustomUserDetails;
+import org.example.musicsheets.validation.ValidFile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @RestController
@@ -26,9 +28,10 @@ public class UserController {
 
     @PutMapping("/users/{userId}")
     public ResponseEntity<GetOneUserResponseDTO> updateWholeUser(@PathVariable Long userId,
-                                                                 @Valid @RequestBody UpdateWholeUserRequestDTO updatedUserDto,
+                                                                 @Valid @RequestPart("data") UpdateWholeUserRequestDTO data,
+                                                                 @Valid @ValidFile @RequestPart("file") MultipartFile file,
                                                                  @AuthenticationPrincipal CustomUserDetails userDetails) {
-        return ResponseEntity.ok(userFacade.updateWholeUser(userId, updatedUserDto, userDetails));
+        return ResponseEntity.ok(userFacade.updateWholeUser(userId, data, file, userDetails));
     }
 
     @DeleteMapping("/users/{userId}")
