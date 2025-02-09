@@ -1,8 +1,10 @@
 package org.example.musicsheets.dto.authentication;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public record RegisterRequestDTO(
 
         @NotBlank(message = "Login cannot be blank")
@@ -15,9 +17,6 @@ public record RegisterRequestDTO(
 
         @NotBlank(message = "Username cannot be blank")
         @Size(max = 20, message = "Username cannot exceed 50 characters")
-        String username,
-
-        @NotBlank(message = "AvatarUrl cannot be blank")
-        String avatarUrl
+        String username
 ) {
 }

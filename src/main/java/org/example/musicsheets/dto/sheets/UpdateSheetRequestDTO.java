@@ -1,10 +1,12 @@
 package org.example.musicsheets.dto.sheets;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import org.example.musicsheets.models.Genre;
 import org.example.musicsheets.validation.ValidEnum;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public record UpdateSheetRequestDTO(
 
         @NotBlank(message = "Title cannot be blank")
