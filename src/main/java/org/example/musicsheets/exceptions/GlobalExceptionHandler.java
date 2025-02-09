@@ -3,12 +3,15 @@ package org.example.musicsheets.exceptions;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
+import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 import java.nio.file.AccessDeniedException;
@@ -29,6 +32,24 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleMissingServletRequestPart(MissingServletRequestPartException ex) {
         log.warn("Missing part in the request: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Missing part in the request:" + ex.getMessage());
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<String> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+        log.warn("Invalid request body: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid request body: " + ex.getMessage());
+    }
+
+    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+    public ResponseEntity<String> handleHttpMediaTypeNotSupported(HttpMediaTypeNotSupportedException ex) {
+        log.warn("Unsupported media type: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body("Unsupported media type: " + ex.getMessage());
+    }
+
+    @ExceptionHandler(MultipartException.class)
+    public ResponseEntity<String> handleMultipartException(MultipartException ex) {
+        log.warn("Multipart exception: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Multipart exception: " + ex.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
