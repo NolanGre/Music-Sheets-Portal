@@ -12,6 +12,7 @@ MusicSheets - это веб-приложение для хранения и об
 - PostgreSQL
 - Redis
 - Maven
+- Amazon S3
 
 ## Функционал
 
@@ -31,15 +32,34 @@ MusicSheets - это веб-приложение для хранения и об
 POST /api/v1/register
 ```
 
-**Request Body:**
+**Request Headers:** Content-Type: multipart/form-data
+
+**Request Body (multipart/form-data):**
+
+| Поле | Тип         | Обязательное | Описание                          |
+|------|-------------|--------------|-----------------------------------|
+| data | JSON (text) | ✅            | Объект с данными пользователя     |
+| file | File        | ✅            | Аватар пользователя (изображение) |
+
+**Допустимые форматы изображений:** `.jpg, .jpeg, .png`
+
+**Формат JSON в поле `data`:**
 
 ```json
 {
   "login": "string",
   "password": "string",
-  "username": "string",
-  "avatarUrl": "string"
+  "username": "string"
 }
+```
+
+**Пример cURL-запроса:**
+
+```bash
+curl -X POST "http://localhost:8080/api/v1/register" \
+-H "Content-Type: multipart/form-data" \
+-F "data={\"login\": \"user123\", \"password\": \"securepass\", \"username\": \"John Doe\"};type=application/json" \
+-F "file=@path/to/avatar.jpg"
 ```
 
 **Response:** 201 Created
@@ -51,6 +71,14 @@ POST /api/v1/register
   "token": "string"
 }
 ```
+
+**Response header:**
+
+```
+Location: /api/v1/users/{userId}
+```
+
+---
 
 #### Вход
 
@@ -76,6 +104,8 @@ POST /api/v1/login
   "token": "string"
 }
 ```
+
+---
 
 ### Нотные записи
 
@@ -107,22 +137,43 @@ GET /api/v1/sheets/{sheetId}
 }
 ```
 
+---
+
 #### Создание нот
 
 ```http
 POST /api/v1/sheets
 ```
 
-**Request Body:**
+**Request Headers:** Content-Type: multipart/form-data
+
+**Request Body (multipart/form-data):**
+
+| Поле | Тип         | Обязательное | Описание                      |
+|------|-------------|--------------|-------------------------------|
+| data | JSON (text) | ✅            | Строка JSON с данными о нотах |
+| file | File        | ✅            | Файл с нотами (изображение)   |
+
+**Допустимые форматы файла:** `.jpg, .jpeg, .png`
+
+**Формат JSON в поле `data`:**
 
 ```json
 {
   "title": "string",
   "author": "string",
   "description": "string",
-  "genre": "string (one of enum)",
-  "fileUrl": "string"
+  "genre": "string (one of enum)"
 }
+```
+
+**Пример cURL-запроса:**
+
+```bash
+curl -X POST "http://localhost:8080/api/v1/sheets" \
+  -H "Content-Type: multipart/form-data" \
+  -F "data={\"title\":\"Symphony No. 5\",\"author\":\"Beethoven\",\"description\":\"Famous symphony\",\"genre\":\"CLASSICAL\"};type=application/json" \
+  -F "file=@path/to/sheet.pdf"
 ```
 
 **Response:** 201 Created
@@ -147,11 +198,13 @@ POST /api/v1/sheets
 }
 ```
 
-**Response header**
+**Response header:**
 
 ```
 Location: /api/v1/sheets/{sheetId}
 ```
+
+---
 
 #### Изменение нот
 
@@ -159,16 +212,35 @@ Location: /api/v1/sheets/{sheetId}
 PUT /api/v1/sheets/{sheetId}
 ```
 
-**Request Body:**
+**Request Headers:** Content-Type: multipart/form-data
+
+**Request Body (multipart/form-data):**
+
+| Поле | Тип         | Обязательное | Описание                      |
+|------|-------------|--------------|-------------------------------|
+| data | JSON (text) | ✅            | Строка JSON с данными о нотах |
+| file | File        | ✅            | Файл с нотами (изображение)   |
+
+**Допустимые форматы файла:** `.jpg, .jpeg, .png`
+
+**Формат JSON в поле `data`:**
 
 ```json
 {
   "title": "string",
   "author": "string",
   "description": "string",
-  "genre": "string (one of enum)",
-  "fileUrl": "string"
+  "genre": "string (one of enum)"
 }
+```
+
+**Пример cURL-запроса:**
+
+```bash
+curl -X PUT "http://localhost:8080/api/v1/sheets/{sheetId}" \
+-H "Content-Type: multipart/form-data" \
+-F "data={\"title\":\"Symphony No. 5\",\"author\":\"Beethoven\",\"description\":\"Famous symphony\",\"genre\":\"CLASSICAL\",\"fileUrl\":\"path/to/sheet.pdf\"};type=application/json" \
+-F "file=@path/to/sheet.jpg"
 ```
 
 **Response:** 200 OK
@@ -193,6 +265,8 @@ PUT /api/v1/sheets/{sheetId}
 }
 ```
 
+---
+
 #### Удаление нот
 
 ```http
@@ -200,6 +274,8 @@ DELETE /api/v1/sheets/{sheetId}
 ```
 
 **Response:** 204 No Content
+
+---
 
 ### Лайки
 
@@ -217,6 +293,8 @@ GET /api/v1/sheets/{sheetId}/like
 }
 ```
 
+---
+
 #### Переключение лайка
 
 ```http
@@ -230,6 +308,8 @@ POST /api/v1/sheets/{sheetId}/like
   "isLikeExist": "boolean"
 }
 ```
+
+---
 
 ### Комментарии
 
@@ -252,7 +332,9 @@ GET /api/v1/sheets/comments/{commentId}
 }
 ```
 
-#### Получение всех комментариев к конертным нотам
+---
+
+#### Получение всех комментариев к конкретным нотам
 
 ```http
 GET /api/v1/sheets/{sheetId}/comments
@@ -273,6 +355,8 @@ GET /api/v1/sheets/{sheetId}/comments
   ...
 ]
 ```
+
+---
 
 #### Создание комментария
 
@@ -307,6 +391,8 @@ POST /api/v1/sheets/{sheetId}/comments
 Location: /api/v1/sheets/comments/{commentId}
 ```
 
+---
+
 #### Обновление комментария
 
 ```http
@@ -317,7 +403,7 @@ PUT /api/v1/sheets/comments/{commentId}
 
 ```json
 {
-   "text": "string"
+  "text": "string"
 }
 ```
 
@@ -325,14 +411,16 @@ PUT /api/v1/sheets/comments/{commentId}
 
 ```json
 {
-   "id": "number",
-   "sheetId": "number",
-   "userId": "number",
-   "text": "string",
-   "creatingDate": "string (ISO 8601)",
-   "modifyingDate": "string (ISO 8601)"
+  "id": "number",
+  "sheetId": "number",
+  "userId": "number",
+  "text": "string",
+  "creatingDate": "string (ISO 8601)",
+  "modifyingDate": "string (ISO 8601)"
 }
 ```
+
+---
 
 #### Удаление комментария
 
@@ -341,6 +429,8 @@ DELETE /api/v1/sheets/comments/{commentId}
 ```
 
 **Response:** 204 No Content
+
+---
 
 ### Пользователи
 
@@ -361,21 +451,42 @@ GET /api/v1/users/{userId}
 }
 ```
 
+---
+
 #### Обновление пользователя
 
 ```http
 PUT /api/v1/users/{userId}
 ```
 
-**Request Body:**
+**Request Headers:** Content-Type: multipart/form-data
+
+**Request Body (multipart/form-data):**
+
+| Поле | Тип         | Обязательное | Описание                          |
+|------|-------------|--------------|-----------------------------------|
+| data | JSON (text) | ✅            | Объект с данными пользователя     |
+| file | File        | ✅            | Аватар пользователя (изображение) |
+
+**Допустимые форматы изображений:** `.jpg, .jpeg, .png`
+
+**Формат JSON в поле `data`:**
 
 ```json
 {
   "login": "string",
   "password": "string",
-  "username": "string",
-  "avatarUrl": "string"
+  "username": "string"
 }
+```
+
+**Пример cURL-запроса:**
+
+```bash
+curl -X PUT "http://localhost:8080/api/v1/users/{userId}" \
+-H "Content-Type: multipart/form-data" \
+-F "data={\"login\": \"user123\", \"password\": \"securepass\", \"username\": \"John Doe\"};type=application/json" \
+-F "file=@path/to/avatar.jpg"
 ```
 
 **Response:** 200 OK
@@ -389,6 +500,8 @@ PUT /api/v1/users/{userId}
 }
 ```
 
+---
+
 #### Удаление пользователея
 
 ```http
@@ -396,6 +509,8 @@ DELETE /api/v1/users/{userId}
 ```
 
 **Response:** 204 No Content
+
+---
 
 ### Безопасность
 
@@ -405,6 +520,8 @@ DELETE /api/v1/users/{userId}
 Authorization: Bearer <token>
 ```
 
+---
+
 ## Запуск проекта
 
 1. Убедитесь, что у вас установлены:
@@ -413,7 +530,7 @@ Authorization: Bearer <token>
     - PostgreSQL
     - Redis
 
-2. Создайте базы данных PostgreSQL и Redis 
+2. Создайте базы данных PostgreSQL и Redis
 
 3. Настройте подключение к базам данных в `application.yaml`
 
@@ -422,6 +539,8 @@ Authorization: Bearer <token>
 ```bash
 mvn spring-boot:run
 ```
+
+---
 
 ## Лицензия
 
